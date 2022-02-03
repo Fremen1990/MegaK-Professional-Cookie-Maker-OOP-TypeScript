@@ -1,22 +1,29 @@
-const express = require('express');
+import {Request, Response, Router} from "express";
+import {CookieMakerApp} from "../index";
+import {COOKIE_ADDONS, COOKIE_BASES} from "../data/cookies-data";
+import {MyRouter} from "../types/my-router";
 
-class ConfiguratorRouter {
-    constructor(cmapp) {
-        this.cmapp = cmapp;
-        this.router = express.Router();
+export class ConfiguratorRouter implements MyRouter{
+    public readonly urlPrefix ='/configurator';
+    public readonly router: Router = Router();
+
+    constructor(private cmapp: CookieMakerApp,
+    ) {
+        this.router = Router();
+
         this.setUpRoutes();
     }
 
-    setUpRoutes() {
+    private setUpRoutes():void {
         this.router.get('/select-base/:baseName', this.selectBase);
         this.router.get('/add-addon/:addonName', this.addAddon);
         this.router.get('/delete-addon/:addonName', this.deleteAddon);
     }
 
-    selectBase = (req, res) => {
+    private selectBase = (req: Request, res: Response): void => {
         const {baseName} = req.params;
 
-        if (!this.cmapp.data.COOKIE_BASES[baseName]) {
+        if (!(this.cmapp.data.COOKIE_BASES as Record<string, number>)[baseName]) {
             return this.cmapp.showErrorPage(res, `There is no such base as ${baseName}.`);
         }
 
@@ -27,10 +34,10 @@ class ConfiguratorRouter {
             });
     };
 
-    addAddon = (req, res) => {
+    private addAddon = (req: Request, res: Response): void => {
         const {addonName} = req.params;
 
-        if (!this.cmapp.data.COOKIE_ADDONS[addonName]) {
+        if (!(this.cmapp.data.COOKIE_ADDONS as Record<string, number>)[addonName]) {
             return this.cmapp.showErrorPage(res, `There is no such addon as ${addonName}.`);
         }
 
@@ -49,7 +56,7 @@ class ConfiguratorRouter {
             });
     };
 
-    deleteAddon = (req, res) => {
+    private deleteAddon = (req: Request, res: Response): void => {
         const {addonName} = req.params;
 
         const oldAddons = this.cmapp.getAddonsFromReq(req);
@@ -67,8 +74,3 @@ class ConfiguratorRouter {
             });
     };
 }
-
-
-module.exports = {
-    ConfiguratorRouter,
-};
