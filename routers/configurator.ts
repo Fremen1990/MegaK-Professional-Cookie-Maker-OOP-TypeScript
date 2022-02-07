@@ -2,26 +2,21 @@ import {Request, Response, Router} from "express";
 import {CookieMakerApp} from "../index";
 import {COOKIE_ADDONS, COOKIE_BASES} from "../data/cookies-data";
 import {MyRouter} from "../types/my-router";
-import {rest} from "../decorators/rest.decorator";
+import {get, rest} from "../decorators/rest.decorator";
+import {BaseRouter} from "./base";
 
-export class ConfiguratorRouter implements MyRouter{
-    public readonly urlPrefix ='/configurator';
-    public readonly router: Router = Router();
+export class ConfiguratorRouter extends BaseRouter implements MyRouter {
+    public readonly urlPrefix = '/configurator';
 
-    constructor(private cmapp: CookieMakerApp,
-    ) {
-        this.router = Router();
 
-        this.setUpRoutes();
-    }
+    // public readonly router: Router = Router();
+    // private setUpRoutes():void {
+    //     this.router.get('/select-base/:baseName', this.selectBase);
+    //     this.router.get('/add-addon/:addonName', this.addAddon);
+    //     this.router.get('/delete-addon/:addonName', this.deleteAddon);
+    // }
 
-    private setUpRoutes():void {
-        this.router.get('/select-base/:baseName', this.selectBase);
-        this.router.get('/add-addon/:addonName', this.addAddon);
-        this.router.get('/delete-addon/:addonName', this.deleteAddon);
-    }
-
-    @rest('get', '/')
+    @get('/select-base/:baseName')
     private selectBase = (req: Request, res: Response): void => {
         const {baseName} = req.params;
 
@@ -36,7 +31,7 @@ export class ConfiguratorRouter implements MyRouter{
             });
     };
 
-    @rest('get', '/')
+   @get('/add-addon/:addonName')
     private addAddon = (req: Request, res: Response): void => {
         const {addonName} = req.params;
 
@@ -59,7 +54,7 @@ export class ConfiguratorRouter implements MyRouter{
             });
     };
 
-    @rest('get', '/')
+@get('/delete-addon/:addonName')
     private deleteAddon = (req: Request, res: Response): void => {
         const {addonName} = req.params;
 
